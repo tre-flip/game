@@ -2,7 +2,7 @@
 
 (in-package :game)
 
-(defparameter *unit* 8
+(defparameter *unit* 4
   ;; used to make shapes consistent
   "One unit is 16 pixels.")
 
