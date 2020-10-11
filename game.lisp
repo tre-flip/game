@@ -9,6 +9,7 @@
   ;; Allow resizing of window and scaling
   (setf *resizable* t)
   (setf *scale-output-to-window* t)
+  (setf *frame-rate* 60)
   (with-session
     (open-project :game)
     ;; this indexes everything defined with DEFRESOURCE

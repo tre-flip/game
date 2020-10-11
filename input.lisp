@@ -25,3 +25,7 @@
 (defun keyboard-direction ()
   (or (wasd-direction)
       (arrow-keys-direction)))
+
+(defun click-direciton ()
+  (when (keyboard-down-p :lmb)
+    (print "mouse clicked")))

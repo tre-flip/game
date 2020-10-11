@@ -2,20 +2,42 @@
 
 (in-package :game)
 
-;;;;;;;;;;;;;;
-;; GENERICS ;;
-;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;
+;; INTERFACES ;;
+;;;;;;;;;;;;;;;;
+
+(defclass destructible ()
+  ())
+
+(defclass one-shot-killer ()
+  ())
 
 (defgeneric bounce (objcect)
   (:documentation "A method for bouncing objects."))
+
+;;;;;;;;;;;;;;
+;; BAD GUYS ;;
+;;;;;;;;;;;;;;
+
+(defclass bot (destructible one-shot-killer node)
+  ((height :initform (units (+ 1 (random 3))))
+   (width :initform (units (+ 1 (random 2))))
+   (color :initform "red")
+   (speed :initform (units (+ 1 (random 4))))
+   (heading :initform (direction-heading :left))))
+
+(defmethod update ((bot bot))
+  (with-slots (speed heading) bot
+      (move bot heading speed)))
 
 ;;;;;;;;;;;;
 ;; PLAYER ;;
 ;;;;;;;;;;;;
 
-(defclass player (node)
-  ((height :initform (units 3))
-   (width :initform (units 3))
+(defclass player (destructible node)
+  ((height :initform (units 2))
+   (width :initform (units 2))
    (color :initform "cyan")
    (speed :initform 7)
    (current-speed :initform 7)
@@ -24,6 +46,7 @@
 
 (defmethod update ((player player))
   (with-slots (speed current-speed heading) player
+    ;; controlled movement -> write a separate function for movement and call it here
     (aif (keyboard-direction)
       (progn
 	(setf heading  (direction-heading it))
@@ -35,13 +58,12 @@
 	  (decf current-speed))
 	(move player heading current-speed)))))
 
-
 ;;;;;;;;;;
 ;; WALL ;;
 ;;;;;;;;;;
 
 (defclass wall (node)
-  ((color :initform "gray50"))
+  ((color :initform "black"))
   (:documentation "A wall doesn't let objects move away from the screen."))
 
 (defun make-wall (x y width height)
@@ -74,11 +96,22 @@
 ;;;;;;;;;;;;;;;;;
 
 (defclass game-buffer (buffer)
-  ((player :initform (make-instance 'player))
+  ((bot-cooldown :initform 0)
+   (player :initform (make-instance 'player))
    (background-color :initform "black")
    (width :initform *width*)
    (height :initform *height*))
   (:documentation "Main game buffer."))
+
+(defmethod update :after ((game-buffer game-buffer))
+  (with-slots (bot-cooldown) game-buffer
+    (aif (> bot-cooldown 0)
+	 (decf bot-cooldown)
+	 (progn
+	   (insert (make-instance 'bot)
+			*width*
+			(random *height*))
+	   (setf bot-cooldown 30)))))
 
 ;; initialisation of the main game-buffer
 (defmethod initialize-instance :after ((game-buffer game-buffer) &key)
@@ -99,3 +132,6 @@
   (with-slots (current-speed heading speed) player
     (move player (opposite-heading heading) speed)
     (setf heading (opposite-heading heading))))
+
+(defmethod collide ((destructible destructible) (killer one-shot-killer))
+  (destroy destructible))
