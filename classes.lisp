@@ -2,8 +2,16 @@
 
 (in-package :game)
 
+;;;;;;;;;;;;;;
+;; GENERICS ;;
+;;;;;;;;;;;;;;
+
 (defgeneric bounce (objcect)
   (:documentation "A method for bouncing objects."))
+
+;;;;;;;;;;;;
+;; PLAYER ;;
+;;;;;;;;;;;;
 
 (defclass player (node)
   ((height :initform (units 3))
@@ -26,6 +34,11 @@
 	(when (> current-speed 0)
 	  (decf current-speed))
 	(move player heading current-speed)))))
+
+
+;;;;;;;;;;
+;; WALL ;;
+;;;;;;;;;;
 
 (defclass wall (node)
   ((color :initform "gray50"))
@@ -55,11 +68,16 @@
        ;; send it all back
        (current-buffer))))
 
+
+;;;;;;;;;;;;;;;;;
+;; GAME-BUFFER ;;
+;;;;;;;;;;;;;;;;;
+
 (defclass game-buffer (buffer)
-   ((player :initform (make-instance 'player))
-    (background-color :initform "black")
-    (width :initform *width*)
-    (height :initform *height*))
+  ((player :initform (make-instance 'player))
+   (background-color :initform "black")
+   (width :initform *width*)
+   (height :initform *height*))
   (:documentation "Main game buffer."))
 
 ;; initialisation of the main game-buffer
