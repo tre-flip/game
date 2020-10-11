@@ -1,6 +1,6 @@
 ;;;; globals.lisp
 
-(in-package :game.globals)
+(in-package :game)
 
 (defparameter *unit* 16
   ;; used to make shapes consistent

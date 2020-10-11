@@ -1,6 +1,6 @@
 ;;;; input.lisp
 
-(in-package :game.input)
+(in-package :game)
 
 (defun wasd-direction ()
   (cond

@@ -12,7 +12,7 @@
   (with-session
     (open-project :game)
     ;; this indexes everything defined with DEFRESOURCE
-    (let ((shooter (make-instance 'shooter)))
+    (let ((game-buffer (make-instance 'game-buffer)))
       ;; start the buffer running
-      (switch-to-buffer shooter)
-      (start-game shooter))))
+      (switch-to-buffer game-buffer)
+      (start-game game-buffer))))
