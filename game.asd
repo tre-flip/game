@@ -8,4 +8,7 @@
   :serial t
   :depends-on ("xelf" "anaphora" "trivia" "arrow-macros")
   :components ((:file "package")
+	       (:file "globals")
+	       (:file "input")
+	       (:file "classes")
                (:file "game")))
