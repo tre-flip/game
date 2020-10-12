@@ -51,7 +51,7 @@
 ;; PLAYER ;;
 ;;;;;;;;;;;;
 
-(defclass player (destructible node)
+(defclass player (node)
   ((height :initform (units 2))
    (width :initform (units 2))
    (color :initform "white")
@@ -129,14 +129,14 @@
 	  (insert (make-instance 'bullet)
 		  (x player)
 		  (y player))
-	  (setf fire-cooldown bot-cooldown-max)))
+	  (setf fire-cooldown 60)))
     (if (> bot-cooldown 0)
 	(decf bot-cooldown)
 	(progn
 	  (insert (make-instance 'bot)
 		  *width*
 		  (random *height*))
-	  (setf bot-cooldown 180)
+	  (setf bot-cooldown bot-cooldown-max)
 	  (decf bot-cooldown-max 3)))))
 
 ;; initialisation of the main game-buffer
@@ -159,13 +159,11 @@
     (move player (opposite-heading heading) speed)
     (setf heading (opposite-heading heading))))
 
-(defmethod collide :after ((destructible destructible) (killer one-shot-killer))
-  (destroy destructible))
+(defmethod collide ((player player) (bot bot))
+  (destroy player))
 
-(defmethod collide :after ((bullet bullet) (destructible destructible))
+(defmethod collide ((bullet bullet) (bot bot))
   (destroy bullet)
-  (destroy destructible))
+  (destroy bot))
 
-(defmethod collide :after ((destructible destructible) (bullet bullet))
-  (destroy bullet)
-  (destroy destructible))
+
